@@ -1,0 +1,21 @@
+export const ADD_PRODUCT = 'ADD_PRODUCT';
+export const REQUEST_PRODUCTS = 'REQUEST_PRODUCTS';
+export const RECEIVE_PRODUCTS = 'RECEIVE_PRODUCTS';
+export const INVALIDATED = 'INVALIDATED';
+
+
+export const REQUEST_DATA = 'REQUEST_DATA';
+export const RECEIVE_DATA = 'RECEIVE_DATA';
+export const INVALIDATED_DATA = 'INVALIDATED_DATA';
+export const ADD_DATA = 'ADD_DATA';
+
+export const REQUEST_PROFILE = 'REQUEST_PROFILE';
+export const RECEIVE_PROFILE  = 'RECEIVE_PROFILE';
+
+export const REQUEST_USER = 'REQUEST_USER';
+export const RECEIVE_USER =  'RECEIVE_USER';
+export const FAILURE_USER = 'FAILURE_USER';
+
+
+export const REQUEST_RECIPE = 'REQUEST_RECIPE';
+export const RECEIVE_RECIPE = 'RECEIVE_RECIPE';
