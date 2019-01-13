@@ -22,16 +22,13 @@ class Navbar extends React.Component{
             <Container>
                 <Menu.Item 
                     onClick={this.props.handleShowClick}><Image size='mini' src='/logo.png' style={{ marginRight: '1.5em' }} />
-                
                 </Menu.Item>
                 <Menu.Item
                     as='a'
                     header
                     name=''
                     onClick={this.handleLink}
-                >
-                    
-                    Home
+                >Home
                 </Menu.Item>
                 <Menu.Item
                     as='a'

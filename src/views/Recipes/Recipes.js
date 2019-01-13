@@ -3,7 +3,7 @@ import {Container, Segment, Sidebar} from 'semantic-ui-react';
 import {lookupOptionIncludeToken} from "../../helpers/functions_helpers";
 import {RECIPE_CATEGORY_LIST_ENDPOINT, RECIPE_LIST_ENDPOINT} from "../../helpers/endpoints";
 import Navbar from '../../components/Navbar';
-import RecipeMenu from "../../components/Recipe/RecipeMenu";
+import SideMenu from '../../components/GeneralComponents/SideMenu';
 import ListGrid from '../../components/Recipe/FirstGrid';
 import EditRecipePage from './FormComponents/EditRecipeForm';
 import NewRecipeForm from "./FormComponents/NewRecipeForm";
@@ -72,28 +72,24 @@ class RecipesPage extends React.Component {
             <div>
                 <Navbar handleShowClick={this.handleShowClick} />
                 <Sidebar.Pushable as={Segment}>
-                {doneLoadingRecipesCategories ?
-                    <RecipeMenu 
-                        categories={recipesCategories} 
-                        toggleEdit={this.toggleEditButton}
-                        toggleNew={this.toggleNewButton}
+                    <SideMenu
+                        handleSidebarHide={this.handleSidebarHide}
+                        visible={visible}
                     />
-                    : <br/>
-                }
+                    <Sidebar.Pusher dimmed={visible}>
+                        <Container style={{ marginTop: '7em' }}>
+                            {doneLoadingRecipes ?
+                            <ListGrid
+                                toggleEdit={this.toggleEditButton}
+                                recipes={recipes}
+                            />
+                            : <p>No data</p>
+                            }
+                            {toggleNew ? <NewRecipeForm categories={recipesCategories} reloadPage={this.reloadPage} />:<p></p>}
+                            {toggleEdit ? <EditRecipePage recipe={recipe} categories={recipesCategories} />:<br />}
+                        </Container>
+                    </Sidebar.Pusher>
                 </Sidebar.Pushable>
-                <Sidebar.Pusher dimmed={visible}>
-                    <Container style={{ marginTop: '7em' }}>
-                        {doneLoadingRecipes ?
-                        <ListGrid
-                            toggleEdit={this.toggleEditButton}
-                            recipes={recipes}
-                        />
-                        : <p>No data</p>
-                        }
-                        {toggleNew ? <NewRecipeForm categories={recipesCategories} reloadPage={this.reloadPage} />:<p></p>}
-                        {toggleEdit ? <EditRecipePage recipe={recipe} categories={recipesCategories} />:<br />}
-                    </Container>
-                </Sidebar.Pusher>
             </div>
         )
     }

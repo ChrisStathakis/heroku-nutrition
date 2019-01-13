@@ -1,25 +1,26 @@
 import React from 'react';
 import { Route, Redirect } from "react-router-dom";
 
-let token = localStorage.getItem('token')
-const fakeAuth = {
-    isAuthenticated: true
-}
 
-if (token === "undefined") {
-    fakeAuth.isAuthenticated = false
-}
+function checkToken(token) {
+    let access = true;
+    if (token === "undefined") {
+        access = false
+    }
+    if (token === null){
+        access = false
+    }
+    return access
 
-if (token == null){
-     fakeAuth.isAuthenticated = false
 }
-
 
 function PrivateRoute({component: Component, ...rest}) {
+    let token = localStorage.getItem('token');
+    let tokenExists = checkToken(token);
     return (
         <Route
             {...rest}
-            render={props => fakeAuth.isAuthenticated ? (
+            render={props => tokenExists ? (
                 <Component {...props} />
             ) : (
                 <Redirect

@@ -62,3 +62,10 @@ export function lookupOptionDELETE(token) {
 
     }
 }
+
+
+export function fetchData(token, endpoint, dataName, thisComp) {
+    fetch(endpoint, lookupOptionIncludeToken(token))
+        .then(resp=>resp.json())
+        .then(respData=>thisComp.setState({[dataName]:respData}))
+}

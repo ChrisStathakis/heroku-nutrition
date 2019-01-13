@@ -1,7 +1,7 @@
 import React from 'react';
 import {withRouter} from 'react-router';
 import { Container, Header, Icon, Responsive, Segment, Sidebar, Menu } from 'semantic-ui-react'
-import MyMenu from '../../components/Homepage/Menu'
+import SideMenu from '../../components/GeneralComponents/SideMenu';
 import Navbar from '../../components/Navbar'
 import FirstGrid from '../../components/Homepage/FirstGrid';
 import moment from "moment/moment";
@@ -182,9 +182,6 @@ class Homepage extends React.Component {
     
     componentDidMount() {
         const token = localStorage.getItem('token');
-        if (token === 'undefined') {
-            this.props.history.push('/')
-        }
         this.fetchProfileData(token);
         this.fetchTodayData(token);
     }
@@ -202,9 +199,9 @@ class Homepage extends React.Component {
             <div>
                 <Navbar handleShowClick={this.handleShowClick} />
                 <Sidebar.Pushable as={Segment}>
-                    <MyMenu 
-                    handleSidebarHide={this.handleSidebarHide} 
-                    visible={visible}
+                    <SideMenu
+                        handleSidebarHide={this.handleSidebarHide}
+                        visible={visible}
                     />
                 <Sidebar.Pusher dimmed={visible}>
                 <Container style={{ marginTop: '7em' }}>

@@ -1,12 +1,13 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
-import { Container } from 'semantic-ui-react';
+import { Container, Sidebar, Segment } from 'semantic-ui-react';
 import ProductMenu from '../../components/Product/ProductMenu';
 import ListGrid from "../../components/Product/ListGrid";
 import EditProductForm from "./FormComponents/EditProfileForm";
 import {FOOD_CATEGORY_LIST_ENDPOINT} from "../../helpers/endpoints";
 import {lookupOptionIncludeToken} from "../../helpers/functions_helpers";
 import NewProduct from "../../components/Product/NewProduct";
+import SideMenu from '../../components/GeneralComponents/SideMenu';
 
 
 class ProductPage extends React.Component {
@@ -18,7 +19,8 @@ class ProductPage extends React.Component {
             toggleNewPage: false,
             editProductData: {},
             categories: {},
-            doneLoadingCategories: false
+            doneLoadingCategories: false,
+            visible: false
         }
     }
 
@@ -58,43 +60,55 @@ class ProductPage extends React.Component {
 
     reloadPage = () => {
         this.setState()
-    }
+    };
 
     componentDidMount(){
         const token = localStorage.getItem('token');
         this.fetchFoodCategories(token);
     }
 
+    handleHideClick = () => this.setState({ visible: false });
+    handleShowClick = () => this.setState({ visible: true });
+    handleSidebarHide = () => this.setState({ visible: false });
+
     render (){
-        const {toggleEditPage, categories, doneLoadingCategories, toggleNewPage } = this.state;
+        const {toggleEditPage, categories, doneLoadingCategories, toggleNewPage, visible } = this.state;
         return (
             <div>
-                <Navbar />
-                {doneLoadingCategories ?
-                    <ProductMenu
-                        categories={categories}
-                        toggleNewPageButton={this.toggleNewPageButton}
+               <Navbar handleShowClick={this.handleShowClick} />
+                <Sidebar.Pushable as={Segment}>
+                    <SideMenu
+                        handleSidebarHide={this.handleSidebarHide}
+                        visible={visible}
                     />
-                    : <p>Oups i did it again</p>
-                }
-                <Container style={{ marginTop: '7em' }}>
-                    {toggleEditPage ?
-                        <EditProductForm
-                            product={this.state.editProductData}
-                            toggleEdit={this.toggleEdit}
-                            closeEditWindow={this.closeEditWindow}
-                            categories={this.state.categories}
-                        />
-                        :<ListGrid toggleEdit={this.toggleEdit} />
-                    }
-                    {toggleNewPage ?
-                    <NewProduct
-                        toggleNewPageButton={this.toggleNewPageButton}
-                        categories={categories}
-                        reloadPage={this.reloadPage}
-                    />
-                    :''}
-                </Container>
+                    <Sidebar.Pusher dimmed={visible} style={{height: '100vh'}}>
+                        {doneLoadingCategories ?
+                            <ProductMenu
+                                categories={categories}
+                                toggleNewPageButton={this.toggleNewPageButton}
+                            />
+                            : <p>Oups i did it again</p>
+                        }
+                        <Container style={{ marginTop: '7em' }}>
+                            {toggleEditPage ?
+                                <EditProductForm
+                                    product={this.state.editProductData}
+                                    toggleEdit={this.toggleEdit}
+                                    closeEditWindow={this.closeEditWindow}
+                                    categories={this.state.categories}
+                                />
+                                :<ListGrid toggleEdit={this.toggleEdit} />
+                            }
+                            {toggleNewPage ?
+                            <NewProduct
+                                toggleNewPageButton={this.toggleNewPageButton}
+                                categories={categories}
+                                reloadPage={this.reloadPage}
+                            />
+                            :''}
+                        </Container>
+                    </Sidebar.Pusher>
+                </Sidebar.Pushable>
             </div>
         )
     }

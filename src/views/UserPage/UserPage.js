@@ -1,8 +1,13 @@
 import React from 'react';
-import { Grid, Column, Card, Button, Header, Icon, Container, Image, Form} from 'semantic-ui-react';
-import {USER_DATA_ENDPOINT} from "../../helpers/endpoints";
+import { Grid, Column, Segment, Sidebar, Header, Icon, Container } from 'semantic-ui-react';
+import {PROFILE_DETAIL_ENDPOINT, USER_DATA_ENDPOINT} from "../../helpers/endpoints";
 import {lookupOptionIncludeToken} from "../../helpers/functions_helpers";
 import Navbar from '../../components/Navbar';
+import InfoGrid from "../../components/UserPage/InfoGrid";
+import FormGrid from "../../components/UserPage/FormGrid";
+import MyLoader from "../../components/MyLoader";
+import ProfileGrid from "../../components/UserPage/ProfileGrid";
+import SideMenu from "../../components/GeneralComponents/SideMenu";
 
 
 const options = [
@@ -12,91 +17,66 @@ const options = [
 
 class UserPage extends  React.Component {
 
-
     state = {
         token: localStorage.getItem('item'),
         doneLoading:false,
-        user_data:[]
-    }
+        user_data:false,
+        profile_data:false,
+        visible: false
+    };
 
     getUser(token){
         const thisComp = this;
         console.log(USER_DATA_ENDPOINT);
         fetch(USER_DATA_ENDPOINT, lookupOptionIncludeToken(token))
-            .then(resp=>resp.json()).then(respData=>{thisComp.setState({user_data:respData, doneLoading:true})})
+            .then(resp=>resp.json()).then(respData=>{
+                thisComp.setState({user_data:respData});
+                thisComp.getProfile(token, respData.id, thisComp);
+            })
+    }
+
+    getProfile(token, user_id, thisComp){
+        const endpoint = PROFILE_DETAIL_ENDPOINT + user_id + '/';
+        fetch(endpoint, lookupOptionIncludeToken(token))
+            .then(resp=> resp.json()).then(respData=>thisComp.setState({profile_data:respData, doneLoading:true}))
     }
 
     componentDidMount(){
         const token = localStorage.getItem('token');
         this.getUser(token)
     }
-    handleChange = (e, { value }) => this.setState({ value })
+    handleChange = (e, { value }) => this.setState({ value });
+    reload = () => this.componentDidMount();
+    handleHideClick = () => this.setState({ visible: false });
+    handleShowClick = () => this.setState({ visible: true });
+    handleSidebarHide = () => this.setState({ visible: false });
+
     render() {
-        const { value } = this.state
-        const {user_data, doneLoading} = this.state;
-        console.log('user_data', user_data);
+        const {user_data, profile_data, doneLoading, visible} = this.state;
         return (
             <div>
-                <Navbar />
-                <Container style={{ marginTop: '7em' }}>
-                    <Header as='h2' icon textAlign='center'>
-                        <Icon color='teal' name='user' circular />
-                        <Header.Content>{user_data.tag_username}</Header.Content>
-                    </Header>
-                    <Grid>
-                        <Grid.Column  mobile={16} tablet={8} computer={8}>
-                            <Card>
-                                <Image src='/images/avatar/large/matthew.png' />
-                                <Card.Content>
-                                    <Card.Header>Matthew</Card.Header>
-                                    <Card.Meta>
-                                        <span className='date'>Joined in 2015</span>
-                                    </Card.Meta>
-                                    <Card.Description>Matthew is a musician living in Nashville.</Card.Description>
-                                </Card.Content>
-                                <Card.Content extra>
-                                    <a>
-                                        <Icon name='user' />
-                                        22 Friends
-                                    </a>
-                                </Card.Content>
-                            </Card>
-                        </Grid.Column>
-                        <Grid.Column  mobile={16} tablet={8} computer={8}>
-                             <Form>
-        <Form.Group widths='equal'>
-          <Form.Input fluid label='First name' placeholder='First name' />
-          <Form.Input fluid label='Last name' placeholder='Last name' />
-          <Form.Select fluid label='Gender' options={options} placeholder='Gender' />
-        </Form.Group>
-        <Form.Group inline>
-          <label>Size</label>
-          <Form.Radio
-            label='Small'
-            value='sm'
-            checked={value === 'sm'}
-            onChange={this.handleChange}
-          />
-          <Form.Radio
-            label='Medium'
-            value='md'
-            checked={value === 'md'}
-            onChange={this.handleChange}
-          />
-          <Form.Radio
-            label='Large'
-            value='lg'
-            checked={value === 'lg'}
-            onChange={this.handleChange}
-          />
-        </Form.Group>
-        <Form.TextArea label='About' placeholder='Tell us more about you...' />
-        <Form.Checkbox label='I agree to the Terms and Conditions' />
-        <Form.Button>Submit</Form.Button>
-      </Form>
-                        </Grid.Column>
-                    </Grid>
-                </Container>
+                <Navbar handleShowClick={this.handleShowClick} />
+                <Sidebar.Pushable as={Segment}>
+                    <SideMenu
+                        handleSidebarHide={this.handleSidebarHide}
+                        visible={visible}
+                    />
+                    <Sidebar.Pusher dimmed={visible}>
+                        <Container style={{ marginTop: '7em' }}>
+                            <Header as='h2' icon textAlign='center'>
+                                <Icon color='teal' name='address card' circular />
+                                <Header.Content>{user_data.tag_username}</Header.Content>
+                            </Header>
+                            {doneLoading ?
+                                 <Grid>
+                                     <InfoGrid user_data={user_data} />
+                                     <FormGrid user_data={user_data} reload={this.reload} />
+                                     <ProfileGrid user_data={user_data} profile_data={profile_data} reload={this.reload} />
+                                 </Grid> : <MyLoader/>
+                            }
+                            </Container>
+                    </Sidebar.Pusher>
+                </Sidebar.Pushable>
             </div>
         )
     }
