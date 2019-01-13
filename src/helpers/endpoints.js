@@ -1,4 +1,4 @@
-export const HOST = 'http://127.0.0.1:8000';
+export const HOST = 'django-react-nutrition.herokuapp.com';
 export const USER_DATA_ENDPOINT = HOST + '/api/current-user/';
 export const USER_EDIT_ENDPOINT = HOST + '/api/edit-user/';
 export const PROFILE_DETAIL_ENDPOINT = HOST + '/api/edit-profile/';
